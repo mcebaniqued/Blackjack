@@ -10,13 +10,13 @@ let dealerNumCards = 0; // Keeps track of the number of cards the dealer has
 
 let dealerScore = 0;
 let playerScore = 0;
-let dealerScoreElem = document.querySelector(".dealer-score");
-let playerScoreElem = document.querySelector(".player-score");
+let dealerSumElem = document.querySelector(".dealer-score");
+let playerSumElem = document.querySelector(".player-score");
 
 let isHidden = true;
 let canHit = true;
 
-let hiddenCard = document.querySelector(".hidden-card"); // The hidden card in the dealer's hand
+// let hiddenCard = document.querySelector(".hidden-card"); // The hidden card in the dealer's hand
 let hidden; // The hidden card in the deck
 
 const hitBtn = document.getElementById("hit");
@@ -72,37 +72,50 @@ function dealCardsToDealer(){
     dealerSum += getCardValue(hidden); // Adds the value of the card to the dealer's sum
     dealerAceCount += checkAce(hidden); // Checks if the card is an ace and adds 1 to the dealer's ace count
 
-    while (dealerSum < 17 && dealerNumCards != 1){
-        let card = deck.pop();
-        createCard(card, "dealer-cards");
+    createHiddenCard("dealer-cards"); // Creates the hidden card in the dealer's hand
+    dealerNumCards++;
 
-        dealerSum += getCardValue(card);
-        dealerAceCount += checkAce(card);
-        dealerNumCards++;
-    }
+    let card = deck.pop();
+    createCard(card, "dealer-cards");
+    dealerNumCards++;
+
+    dealerSum += getCardValue(card);
+    dealerAceCount += checkAce(card);
+
     // console.log({dealerSum});
-    // console.log(dealerAceCount);
-    updateDealerScoreElem(dealerSum);
+    // console.log({dealerAceCount});
+    updateDealerSumElem(dealerSum);
 }
+
 
 function dealCardstoPlayer(){
     for(let i = 0; i < 2; i++){
         let card = deck.pop();
         createCard(card, "player-cards");
-
+        
         playerSum += getCardValue(card);
         playerAceCount += checkAce(card);
-
+        
     }
-    // console.log({playerSum});
-
+    
     if(playerSum == 21){
         checkWinCondition();
     }
-
-    updatePlayerScoreElem(playerSum);
-
+    
+    updatePlayerSumElem(playerSum);
+    
+    // console.log({playerSum});
     // console.log({playerAceCount});
+}
+
+function createHiddenCard(elem){
+    const cardElem = createElement("div"); // Creates a div element
+    const cardImg = createElement("img"); // Creates an img element
+    addClassToElement(cardElem, "card"); // Adds the class "card" to the div element
+    addSrcToImageElem(cardImg, "images/blue.png"); // Adds the src attribute to the img element
+    addClassToElement(cardImg, "hidden-card-img"); // Adds the class "card-img" to the img element
+    addChildElement(cardElem, cardImg); // Adds the img element to the div element
+    addChildElement(document.querySelector(`.${elem}`), cardElem); // Adds the div element to the element with the class "player-cards"
 }
 
 function createCard(card, elem){
@@ -128,7 +141,6 @@ function getCardValue(card){
 }
 
 function checkAce(card){
-    // console.log({card});
     if(card.split("_")[1] == "ace"){
         return 1;
     } else {
@@ -144,16 +156,16 @@ function reduceAce(sum, aceCount){
     }
 }
 
-function updateDealerScoreElem(sum){
+function updateDealerSumElem(sum){
     if(isHidden){
-        dealerScoreElem.textContent = `${sum - getCardValue(hidden)}?`;
+        dealerSumElem.textContent = `${sum - getCardValue(hidden)}?`;
     } else {
-        dealerScoreElem.textContent = sum;
+        dealerSumElem.textContent = sum;
     }
 }
 
-function updatePlayerScoreElem(sum){
-    playerScoreElem.textContent = sum;
+function updatePlayerSumElem(sum){
+    playerSumElem.textContent = sum;
 }
 
 function hit(){
@@ -165,31 +177,25 @@ function hit(){
 
     playerSum += getCardValue(card);
     playerAceCount += checkAce(card);
-    // console.log({playerSum});
-    // console.log({playerAceCount})
     
     if(reduceAce(playerSum, playerAceCount)){
         playerSum -= 10;
         playerAceCount--;
     }
-
+    
     if(playerSum > 21){
         checkWinCondition();
     }
-
-    updatePlayerScoreElem(playerSum);
+    
+    updatePlayerSumElem(playerSum);
     // console.log({playerSum});
+    // console.log({playerAceCount})
 }
 
 function stand(){
     canHit = false;
 
     revealHiddenCard();
-
-    // if(reduceAce(dealerSum, dealerAceCount)){
-    //     dealerSum -= 10;
-    //     dealerAceCount--;
-    // }
     
     while(dealerSum < 21){
         if(dealerSum > playerSum)
@@ -207,7 +213,7 @@ function stand(){
         }
     }
     checkWinCondition();
-    updateDealerScoreElem(dealerSum);
+    updateDealerSumElem(dealerSum);
 
     // console.log({dealerSum});
     // console.log({playerSum});
@@ -215,9 +221,9 @@ function stand(){
 
 function revealHiddenCard(){
     isHidden = false;
-    hiddenCard.innerHTML = "";
-    createCard(hidden, "hidden-card");
-    updateDealerScoreElem(dealerSum);
+    hiddenCardImg = document.querySelector(".hidden-card-img");
+    hiddenCardImg.src = "images/" + hidden + ".png";
+    updateDealerSumElem(dealerSum);
 }
 
 function checkWinCondition(){
@@ -250,43 +256,34 @@ function checkWinCondition(){
     
     hitBtn.disabled = true;
     standBtn.disabled = true;
-    // hitBtn.parentNode.removeChild(hitBtn);
-    // standBtn.parentNode.removeChild(standBtn);
 
-    // setTimeout(()=>{
-    //     let newGameBtn = createElement("button");
-    //     addClassToElement(newGameBtn, "new-game-btn");
-    //     addClassToElement(newGameBtn, "btn");
-    //     addIdToElement(newGameBtn, "new-game-btn");
-    //     newGameBtn.innerHTML = "New Game";
-    //     addChildElement(buttonsContainer, newGameBtn);
-    //     newGameBtn.addEventListener("click", newGame);
-    // }, 1000);
+    setTimeout(()=>{
+        let newGameBtn = createElement("button");
+        addClassToElement(newGameBtn, "new-game-btn");
+        addClassToElement(newGameBtn, "btn");
+        addIdToElement(newGameBtn, "new-game-btn");
+        newGameBtn.innerHTML = "New Game";
+        addChildElement(buttonsContainer, newGameBtn);
+        newGameBtn.addEventListener("click", newGame);
+    }, 1000);
 
 }
 
 function newGame(){
+    document.querySelector(".new-game-btn").remove();
+    updateStatusElement(gameStatus, "block", "black", "&nbsp;");
     hitBtn.disabled = false;
     standBtn.disabled = false;
-    document.querySelector(".new-game-btn").parentNode.removeChild(document.querySelector(".new-game-btn"));
-    updateStatusElement(gameStatus, "block", "black", "");
+    canHit = true;
+    isHidden = true;
     playerSum = 0;
     dealerSum = 0;
     playerAceCount = 0;
     dealerAceCount = 0;
-    isHidden = true;
+    document.querySelector(".player-cards").innerHTML = "";
+    document.querySelector(".dealer-cards").innerHTML = "";
 
-    // document.querySelector(".dealer-cards").innerHTML = "";
-    // document.querySelector(".player-cards").innerHTML = "";
-    // const hiddenCardElem = createElement("div"); 
-    // addClassToElement(hiddenCardElem, "card");
-    // addClassToElement(hiddenCardElem, "hidden-card");
-    // const hiddenCardImgElem = createElement("img");
-    // addClassToElement(hiddenCardImgElem, "card-img");
-    // addSrcToImageElem(hiddenCardImgElem, "images/blue.png");
-    // addChildElement(hiddenCardElem, hiddenCardImgElem);
-
-    // startNewGame();
+    startNewGame();
 }
 
 function createElement(elemType){
@@ -318,5 +315,6 @@ function updateStatusElement(elem, display, color, innerHTML){
     }
 }
 
-// TODO: change the behavior of the hidden-card
-// TODO: implement a new game button that resets the game
+// TODO: Fix the bug where both player and dealer get blackjack during initial deal, but player wins instead of ties
+// TODO: Add animations
+// TODO: Add scoring system
