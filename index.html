@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-title">
+            <h1>Blackjack</h1>
+        </div>
+    </div>
+    <div class="game-container">
+        <div class="dealer">
+            <div class="dealer-info">
+                <div class="name dealer-name">Dealer</div>
+                <div class="score dealer-score">0</div>
+            </div>
+            <div class="dealer-cards">
+                <div class="card hidden-card">
+                    <img src="images/blue.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="status-container">
+            <h2 class="status">&nbsp;</h2>
+        </div>
+        <div class="player">
+            <div class="player-cards">
+
+            </div>
+            <div class="player-info">
+                <div class="name player-name">Player</div>
+                <div class="score player-score">0</div>
+            </div>
+        </div>
+        <div class="buttons-container">
+            <button id="hit" class="btn btn-hit">Hit</button>
+            <button id="stand" class="btn btn-stand">Stand</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
